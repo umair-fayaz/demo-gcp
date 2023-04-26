@@ -18,13 +18,15 @@ jobs:
       with:
         credentials_json: ${{ secrets.CREDENTIALS_JSON }}
     - run: gcloud compute instances list --project ${{ secrets.PROJECT_ID }}
-#     - id: 'compute-ssh'
-#       uses: 'google-github-actions/ssh-compute@v0'
-#       with:
-#         instance_name: 'first-instance'
-#         zone: 'asia-south2-a'
-#         ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-#         command: 'echo Hello world'
+
+
+    - id: 'compute-ssh'
+      uses: 'google-github-actions/ssh-compute@v0'
+      with:
+        instance_name: 'first-instance'
+        zone: 'asia-south2-a'
+        ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+        command: 'echo Hello world'
 
 #     # Example of using the output
 #     - id: 'test'
