@@ -1,4 +1,4 @@
-name: Install Terrascan
+name: GCP GithubActions
 on:
   push:
     branches:
