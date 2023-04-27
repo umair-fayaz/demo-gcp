@@ -26,7 +26,11 @@ jobs:
         instance_name: 'first-instance'
         zone: 'asia-south2-a'
         ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-        command: 'echo Hello world && ls -al && pwd'
+        command: |
+          echo "hello GCP"
+          pwd
+          whoami
+          ls -al
 
     # Example of using the output
     - id: 'test'
