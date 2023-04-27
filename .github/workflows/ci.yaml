@@ -24,7 +24,7 @@ jobs:
       name: Send commands via SSH
       uses: 'google-github-actions/ssh-compute@v0'
       with:
-        instance_name: 'first-instance'
+        instance_name: '${{ secrets.INSTANCE_NAME }}'
         zone: 'asia-south2-a'
         ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
         command: |
