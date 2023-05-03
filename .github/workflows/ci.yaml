@@ -26,13 +26,15 @@ jobs:
         name: Set command value based on options chosen
         run: |
           if [ "$UPDATE_BAHMNI_OPTION" == "update_without_removing_volumes" ]; then
-            echo "::set-output name=command::without removing volumes"
+           the_command="docker compose up -d"
+           echo "command=$the_command" >> "$GITHUB_OUTPUT"
           elif [ "$UPDATE_BAHMNI_OPTION" == "update_and_remove_volumes" ]; then
-            echo "::set-output name=command::with removing volumes && this works"
+           the_command="docker compose down -v && docker compose up -d"
+           echo "command=$the_command" >> "$GITHUB_OUTPUT"
           fi
       
       - id: 'compute-ssh'
         name: Send commands via SSH
         run: |     
-            echo ${{ steps.set-command-value.command }}
+            echo ${{ steps.set-command-value.outputs.command }}
             
