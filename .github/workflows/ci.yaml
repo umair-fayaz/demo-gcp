@@ -17,24 +17,19 @@ env:
   UPDATE_BAHMNI_OPTION: ${{ github.event.inputs.update_bahmni_option || 'update_without_removing_volumes'}}
 
 jobs:
-  deploy:
-    name: Deploy to QA Instance
+  trigger-workflow:
+    name: Trigger workflow to deploy to Docker env
     runs-on: ubuntu-latest
+    env:
+      EVENT_TYPE: openmrs-ipd-openmrs-event
     steps:
-      - uses: actions/checkout@v3
-      - id: 'set-command-value'
-        name: Set command value based on options chosen
+      - name: Create repository_dispatch
         run: |
-          if [ "$UPDATE_BAHMNI_OPTION" == "update_without_removing_volumes" ]; then
-           the_command="docker compose up -d"
-           echo "command=$the_command" >> "$GITHUB_OUTPUT"
-          elif [ "$UPDATE_BAHMNI_OPTION" == "update_and_remove_volumes" ]; then
-           the_command="docker compose down -v && docker compose up -d"
-           echo "command=$the_command" >> "$GITHUB_OUTPUT"
+          trigger_result=$(curl -s -o trigger_response.txt -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" -H 'authorization: Bearer ${{ secrets.BAHMNI_PAT }}' https://api.github.com/repos/${{ secrets.IPD_ORG_NAME }}/${{ secrets.IPD_REPOSITORY_NAME }}/dispatches -d '{"event_type":"'"${EVENT_TYPE}"'"}')
+          if [ $trigger_result == 204 ];then
+            echo "Trigger to $ORG_NAME/$REPOSITORY_NAME Success"
+          else
+            echo "Trigger to $ORG_NAME/$REPOSITORY_NAME Failed"
+            cat trigger_response.txt
+            exit 1
           fi
-      
-      - id: 'compute-ssh'
-        name: Send commands via SSH
-        run: |     
-            echo ${{ steps.set-command-value.outputs.command }}
-            
